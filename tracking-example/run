@@ -10,7 +10,9 @@ onExit() {
 trap onExit EXIT
 
 main() {
+  source ../venv/bin/activate
   ./mlflow_tracking.py
+  deactivate
 }
 
 main "$@"

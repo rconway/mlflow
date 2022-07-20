@@ -13,8 +13,8 @@ main() {
   source venv/bin/activate
   mlflow server \
     --backend-store-uri ./tracking/mlruns \
-    --serve-artifacts \
-    --default-artifact-root "$PWD/tracking/mlruns"
+    --serve-artifacts
+    # --default-artifact-root "$PWD/tracking/mlruns"
   deactivate
 }
 
