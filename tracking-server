@@ -1,0 +1,21 @@
+#!/usr/bin/env bash
+
+ORIG_DIR="$(pwd)"
+cd "$(dirname "$0")"
+BIN_DIR="$(pwd)"
+
+onExit() {
+  cd "${ORIG_DIR}"
+}
+trap onExit EXIT
+
+main() {
+  source venv/bin/activate
+  mlflow server \
+    --backend-store-uri ./tracking/mlruns \
+    --serve-artifacts \
+    --default-artifact-root "$PWD/tracking/mlruns"
+  deactivate
+}
+
+main "$@"
