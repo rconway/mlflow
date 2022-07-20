@@ -9,12 +9,14 @@ onExit() {
 }
 trap onExit EXIT
 
+tracking_root_directory="./tracking/mlruns"
+
 main() {
   source venv/bin/activate
   mlflow server \
-    --backend-store-uri ./tracking/mlruns \
-    --serve-artifacts
-    # --default-artifact-root "$PWD/tracking/mlruns"
+    --backend-store-uri "${tracking_root_directory}" \
+    --serve-artifacts \
+    --artifacts-destination "${tracking_root_directory}"
   deactivate
 }
 
