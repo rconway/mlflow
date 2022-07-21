@@ -6,7 +6,7 @@ Experiments with mlflow
 
 Setup the python virtial environment including `mlflow` and dependencies.
 
-```
+```bash
 ./create-venv
 ```
 
@@ -28,7 +28,7 @@ For docs see here - [https://www.mlflow.org/docs/latest/tracking.html](https://w
 
 Runs the tracking server on [http://127.0.0.1:5000/](http://127.0.0.1:5000/). The tracking server is configured to maintain tracking information at `./store/backend` and artifacts at `./store/artifacts` - thus simulating the ability to separate the persistence of these stores - for example, to maintain the artifacts in S3 object storage.
 
-```
+```bash
 ./tracking-server
 ```
 
@@ -36,7 +36,7 @@ Runs the tracking server on [http://127.0.0.1:5000/](http://127.0.0.1:5000/). Th
 
 The simple example demonstrates registration of execution metrics and artifacts to the tracking server.
 
-```
+```bash
 ./tracking-example/run
 ```
 
@@ -50,7 +50,7 @@ When the code runs it needs the URI of the tracking server - which can be specif
 
 See example in `tracking-example/mlflow_tracking.py`...
 
-```
+```python
 remote_server_uri = "http://127.0.0.1:5000"
 mlflow.set_tracking_uri(remote_server_uri)
 ```
@@ -59,14 +59,14 @@ mlflow.set_tracking_uri(remote_server_uri)
 
 See example in `tutorial/sklearn_elasticnet_wine/train`...
 
-```
+```bash
 export MLFLOW_TRACKING_URI="http://127.0.0.1:5000"
 python train.py
 ```
 
 or
 
-```
+```bash
 MLFLOW_TRACKING_URI="http://127.0.0.1:5000" python train.py
 ```
 
@@ -74,7 +74,7 @@ MLFLOW_TRACKING_URI="http://127.0.0.1:5000" python train.py
 
 Ensure the tracking server is running...
 
-```
+```bash
 ./tracking-server
 ```
 
@@ -84,8 +84,12 @@ Check the UI at [http://127.0.0.1:5000/](http://127.0.0.1:5000/).
 
 #### Run the model training
 
-```
+```bash
 $ ./tutorial/sklearn_elasticnet_wine/train 
+```
+
+(output)
+```
 Elasticnet model (alpha=0.500000, l1_ratio=0.500000):
   RMSE: 0.7931640229276851
   MAE: 0.6271946374319586
@@ -99,10 +103,12 @@ In addition to the runs ([Experiments](http://127.0.0.1:5000/#/experiments/0)) t
 
 Run the model with different parameterisation...
 
-```
+```bash
 ./tutorial/sklearn_elasticnet_wine/train <alpha> <l1_ratio>
+```
 
 e.g.
+```bash
 ./tutorial/sklearn_elasticnet_wine/train 0.3 0.7
 ```
 
@@ -112,7 +118,7 @@ The model resulting from each run is [registered as a new version](http://127.0.
 
 The file `tutorial/sklearn_elasticnet_wine/MLproject` specifies the mlflow project, which specifies the parameters, their default values, etc...
 
-```
+```yaml
 name: tutorial
 
 conda_env: conda.yaml
@@ -127,7 +133,7 @@ entry_points:
 
 ...along with the environment specifcation in the file `tutorial/sklearn_elasticnet_wine/conda.yaml`...
 
-```
+```yaml
 name: tutorial
 channels:
   - conda-forge
@@ -142,12 +148,50 @@ dependencies:
 
 The project is run with the command `mlflow run <project-uri> <args>` - which can be invoked with...
 
-```
+```bash
 ./tutorial/sklearn_elasticnet_wine/run-project
 ```
 
 ...or with args to set parameters...
 
-```
+```bash
 ./tutorial/sklearn_elasticnet_wine/run-project -P alpha=0.3 -P l1_ratio=0.7
+```
+
+#### Serve the model
+
+Amongst the artifacts of a run are two files:
+* MLmodel<br>
+  _A metadata file that tells MLflow how to load the model_
+* model.pkl<br>
+  _A serialized version of the linear regression model that was trained_
+
+These were created as a result of the following python call `mlflow.sklearn.log_model()` to save the model...
+
+```python
+# Register the model
+# There are other ways to use the Model Registry, which depends on the use case,
+# please refer to the doc for more information:
+# https://mlflow.org/docs/latest/model-registry.html#api-workflow
+mlflow.sklearn.log_model(lr, "model", registered_model_name="ElasticnetWineModel")
+```
+
+From the Experiments tab of the mlflow web UI the run can be inspected to obtain the full path to the model, for example - `mlflow-artifacts:/0/23ca8ae6e5c74b85b95a4cb6bf64634c/artifacts/model`.
+
+With this path the model can be served at [http://127.0.0.1:1234](http://127.0.0.1:1234)...
+
+```bash
+export MLFLOW_TRACKING_URI="http://127.0.0.1:5000"
+mlflow models serve -m mlflow-artifacts:/0/23ca8ae6e5c74b85b95a4cb6bf64634c/artifacts/model -p 1234
+```
+
+Once running as a service, the model can be interrogated for predictions against given input data...
+
+```bash
+curl -X POST -H "Content-Type:application/json; format=pandas-split" --data '{"columns":["alcohol", "chlorides", "citric acid", "density", "fixed acidity", "free sulfur dioxide", "pH", "residual sugar", "sulphates", "total sulfur dioxide", "volatile acidity"],"data":[[12.8, 0.029, 0.48, 0.98, 6.2, 29, 3.33, 1.2, 0.39, 75, 0.66]]}' http://127.0.0.1:1234/invocations
+```
+
+(output)
+```
+[4.662849784340928]
 ```
