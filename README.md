@@ -82,7 +82,7 @@ Check the UI at [http://127.0.0.1:5000/](http://127.0.0.1:5000/).
 
 ### sklearn_elasticnet_wine
 
-Run the model training...
+#### Run the model training
 
 ```
 $ ./tutorial/sklearn_elasticnet_wine/train 
@@ -101,6 +101,53 @@ Run the model with different parameterisation...
 
 ```
 ./tutorial/sklearn_elasticnet_wine/train <alpha> <l1_ratio>
+
+e.g.
+./tutorial/sklearn_elasticnet_wine/train 0.3 0.7
 ```
 
 The model resulting from each run is [registered as a new version](http://127.0.0.1:5000/#/models/ElasticnetWineModel). The runs can be compared on the [Experiments tab](http://127.0.0.1:5000/#/experiments/0).
+
+#### Run the model as a project
+
+The file `tutorial/sklearn_elasticnet_wine/MLproject` specifies the mlflow project, which specifies the parameters, their default values, etc...
+
+```
+name: tutorial
+
+conda_env: conda.yaml
+
+entry_points:
+  main:
+    parameters:
+      alpha: {type: float, default: 0.5}
+      l1_ratio: {type: float, default: 0.1}
+    command: "python train.py {alpha} {l1_ratio}"
+```
+
+...along with the environment specifcation in the file `tutorial/sklearn_elasticnet_wine/conda.yaml`...
+
+```
+name: tutorial
+channels:
+  - conda-forge
+dependencies:
+  - python=3.7
+  - pip
+  - pip:
+      - scikit-learn==0.23.2
+      - mlflow>=1.0
+      - pandas
+```
+
+The project is run with the command `mlflow run <project-uri> <args>` - which can be invoked with...
+
+```
+./tutorial/sklearn_elasticnet_wine/run-project
+```
+
+...or with args to set parameters...
+
+```
+./tutorial/sklearn_elasticnet_wine/run-project -P alpha=0.3 -P l1_ratio=0.7
+```

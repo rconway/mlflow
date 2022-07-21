@@ -1,0 +1,21 @@
+#!/usr/bin/env bash
+
+ORIG_DIR="$(pwd)"
+cd "$(dirname "$0")"
+BIN_DIR="$(pwd)"
+
+# Use the remote tracking server
+export MLFLOW_TRACKING_URI="http://127.0.0.1:5000"
+
+main() {
+  source ../../venv/bin/activate
+  mlflow run . "$@"
+  deactivate
+}
+
+onExit() {
+  cd "${ORIG_DIR}"
+}
+trap onExit EXIT
+
+main "$@"
