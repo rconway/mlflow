@@ -69,3 +69,38 @@ or
 ```
 MLFLOW_TRACKING_URI="http://127.0.0.1:5000" python train.py
 ```
+
+## Tutorial
+
+Ensure the tracking server is running...
+
+```
+./tracking-server
+```
+
+Check the UI at [http://127.0.0.1:5000/](http://127.0.0.1:5000/).
+
+### sklearn_elasticnet_wine
+
+Run the model training...
+
+```
+$ ./tutorial/sklearn_elasticnet_wine/train 
+Elasticnet model (alpha=0.500000, l1_ratio=0.500000):
+  RMSE: 0.7931640229276851
+  MAE: 0.6271946374319586
+  R2: 0.10862644997792614
+Successfully registered model 'ElasticnetWineModel'.
+2022/07/21 11:06:08 INFO mlflow.tracking._model_registry.client: Waiting up to 300 seconds for model version to finish creation.                     Model name: ElasticnetWineModel, version 1
+Created version '1' of model 'ElasticnetWineModel'.
+```
+
+In addition to the runs ([Experiments](http://127.0.0.1:5000/#/experiments/0)) the registered model can be visualised at [http://127.0.0.1:5000/#/models](http://127.0.0.1:5000/#/models).
+
+Run the model with different parameterisation...
+
+```
+./tutorial/sklearn_elasticnet_wine/train <alpha> <l1_ratio>
+```
+
+The model resulting from each run is [registered as a new version](http://127.0.0.1:5000/#/models/ElasticnetWineModel). The runs can be compared on the [Experiments tab](http://127.0.0.1:5000/#/experiments/0).
