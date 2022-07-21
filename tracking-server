@@ -12,7 +12,9 @@ store_root="store"
 # backend store
 # - for the mlflow entities (runs, parameters, metrics, tags, notes, metadata, etc)
 # - need to use a 'proper' database (rather than filesystem) to support storage of model registry
-backend_store="sqlite:///${store_root}/backend/mlflow.db"
+backend_dir="${store_root}/backend"
+mkdir -p "${backend_dir}"
+backend_store="sqlite:///${backend_dir}/mlflow.db"
 # artifact store
 # - persists artifacts (files, models, images, in-memory objects, or model summary, etc)
 # - for now just use the local filesystem
