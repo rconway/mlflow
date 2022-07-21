@@ -26,7 +26,7 @@ For docs see here - [https://www.mlflow.org/docs/latest/tracking.html](https://w
 
 ### Run the 'remote' Tracking Server
 
-Runs the tracking server on [http://127.0.0.1:5000/](http://127.0.0.1:5000/). The tracking server is configured to maintain tracking information and artifacts under the local directory `./tracking/mlruns`.
+Runs the tracking server on [http://127.0.0.1:5000/](http://127.0.0.1:5000/). The tracking server is configured to maintain tracking information at `./store/backend` and artifacts at `./store/artifacts` - thus simulating the ability to separate the persistence of these stores - for example, to maintain the artifacts in S3 object storage.
 
 ```
 ./tracking-server
