@@ -4,19 +4,43 @@ ORIG_DIR="$(pwd)"
 cd "$(dirname "$0")"
 BIN_DIR="$(pwd)"
 
+#-------------------------------------------------------------------------------
+# mlflow store locations
+#-------------------------------------------------------------------------------
+store_root="${ORIG_DIR}/store"
+#
+# backend store
+# - for the mlflow entities (runs, parameters, metrics, tags, notes, metadata, etc)
+backend_store="${store_root}/backend"
+# artifact store
+# - persists artifacts (files, models, images, in-memory objects, or model summary, etc)
+artifact_store="${store_root}/artifacts"
+#-------------------------------------------------------------------------------
+
+# Run mlflow remote tracking server
+runServer() {
+  # Run `mlflow server` with options...
+  #   --backend-store-uri     - location of the backend store
+  #   --serve-artifacts       - enables proxying of artifacts
+  #   --artifacts-destination - location of the artifact store
+  mlflow server \
+    --backend-store-uri "${backend_store}" \
+    --serve-artifacts \
+    --artifacts-destination "${artifact_store}"
+}
+
+# cleanup on exit
 onExit() {
+  if hash deactivate >/dev/null 2>&1; then
+    deactivate
+  fi
   cd "${ORIG_DIR}"
 }
-trap onExit EXIT
-
-tracking_root_directory="./tracking/mlruns"
 
 main() {
+  trap onExit EXIT
   source venv/bin/activate
-  mlflow server \
-    --backend-store-uri "${tracking_root_directory}" \
-    --serve-artifacts \
-    --artifacts-destination "${tracking_root_directory}"
+  runServer
   deactivate
 }
 
