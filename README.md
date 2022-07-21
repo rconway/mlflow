@@ -2,6 +2,21 @@
 
 Experiments with mlflow
 
+- [mlflow](#mlflow)
+  - [Create python virtual environment](#create-python-virtual-environment)
+  - [Concepts](#concepts)
+  - [Remote Tracking Server](#remote-tracking-server)
+    - [Run the 'remote' Tracking Server](#run-the-remote-tracking-server)
+    - [Run the simple example](#run-the-simple-example)
+    - [Specify the 'target' tracking server](#specify-the-target-tracking-server)
+      - [In code](#in-code)
+      - [Environment Variable](#environment-variable)
+  - [Tutorial](#tutorial)
+    - [sklearn_elasticnet_wine](#sklearn_elasticnet_wine)
+      - [Run the model training](#run-the-model-training)
+      - [Run the model as a project](#run-the-model-as-a-project)
+      - [Serve the model](#serve-the-model)
+
 ## Create python virtual environment
 
 Setup the python virtial environment including `mlflow` and dependencies.
@@ -88,7 +103,7 @@ Check the UI at [http://127.0.0.1:5000/](http://127.0.0.1:5000/).
 $ ./tutorial/sklearn_elasticnet_wine/train 
 ```
 
-(output)
+_(output)_
 ```
 Elasticnet model (alpha=0.500000, l1_ratio=0.500000):
   RMSE: 0.7931640229276851
@@ -191,7 +206,7 @@ Once running as a service, the model can be interrogated for predictions against
 curl -X POST -H "Content-Type:application/json; format=pandas-split" --data '{"columns":["alcohol", "chlorides", "citric acid", "density", "fixed acidity", "free sulfur dioxide", "pH", "residual sugar", "sulphates", "total sulfur dioxide", "volatile acidity"],"data":[[12.8, 0.029, 0.48, 0.98, 6.2, 29, 3.33, 1.2, 0.39, 75, 0.66]]}' http://127.0.0.1:1234/invocations
 ```
 
-(output)
+_(output)_
 ```
 [4.662849784340928]
 ```
