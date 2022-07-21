@@ -10,7 +10,21 @@ Setup the python virtial environment including `mlflow` and dependencies.
 ./create-venv
 ```
 
-## Run the 'remote' Tracking Server
+## Concepts
+
+See docs - [https://www.mlflow.org/docs/latest/concepts.html](https://www.mlflow.org/docs/latest/concepts.html).
+
+Four components:
+* **Tracking** - API and UI for logging (parameters, versions, metrics, artifacts, etc.)
+* **Projects** - standard packaging for reusable data science
+* **Models** - convention for packaging machine learning models
+* **Model Registry** - centralised model store, API and UI for collaborative full lifecycle model management
+
+## Remote Tracking Server
+
+For docs see here - [https://www.mlflow.org/docs/latest/tracking.html](https://www.mlflow.org/docs/latest/tracking.html).
+
+### Run the 'remote' Tracking Server
 
 Runs the tracking server on [http://127.0.0.1:5000/](http://127.0.0.1:5000/). The tracking server is configured to maintain tracking information and artifacts under the local directory `./tracking/mlruns`.
 
@@ -18,7 +32,7 @@ Runs the tracking server on [http://127.0.0.1:5000/](http://127.0.0.1:5000/). Th
 ./tracking-server
 ```
 
-## Run the simple example
+### Run the simple example
 
 The simple example demonstrates registration of execution metrics and artifacts to the tracking server.
 
