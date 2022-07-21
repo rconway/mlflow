@@ -40,10 +40,32 @@ The simple example demonstrates registration of execution metrics and artifacts 
 ./tracking-example/run
 ```
 
-Note that the python code sets the url of the tracking server...
+See the [mlflow web ui of the tracking server](http://127.0.0.1:5000/#/experiments/0) for the outcome of the run.
+
+### Specify the 'target' tracking server
+
+When the code runs it needs the URI of the tracking server - which can be specified in the following ways...
+
+#### In code
+
+See example in `tracking-example/mlflow_tracking.py`...
+
 ```
 remote_server_uri = "http://127.0.0.1:5000"
 mlflow.set_tracking_uri(remote_server_uri)
 ```
 
-See the [mlflow web ui of the tracking server](http://127.0.0.1:5000/#/experiments/0) for the outcome of the run.
+#### Environment Variable
+
+See example in `tutorial/sklearn_elasticnet_wine/train`...
+
+```
+export MLFLOW_TRACKING_URI="http://127.0.0.1:5000"
+python train.py
+```
+
+or
+
+```
+MLFLOW_TRACKING_URI="http://127.0.0.1:5000" python train.py
+```

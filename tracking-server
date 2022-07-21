@@ -7,13 +7,15 @@ BIN_DIR="$(pwd)"
 #-------------------------------------------------------------------------------
 # mlflow store locations
 #-------------------------------------------------------------------------------
-store_root="${ORIG_DIR}/store"
+store_root="store"
 #
 # backend store
 # - for the mlflow entities (runs, parameters, metrics, tags, notes, metadata, etc)
-backend_store="${store_root}/backend"
+# - need to use a 'proper' database (rather than filesystem) to support storage of model registry
+backend_store="sqlite:///${store_root}/backend/mlflow.db"
 # artifact store
 # - persists artifacts (files, models, images, in-memory objects, or model summary, etc)
+# - for now just use the local filesystem
 artifact_store="${store_root}/artifacts"
 #-------------------------------------------------------------------------------
 
@@ -23,10 +25,12 @@ runServer() {
   #   --backend-store-uri     - location of the backend store
   #   --serve-artifacts       - enables proxying of artifacts
   #   --artifacts-destination - location of the artifact store
+  pushd "${ORIG_DIR}"
   mlflow server \
     --backend-store-uri "${backend_store}" \
     --serve-artifacts \
     --artifacts-destination "${artifact_store}"
+  popd
 }
 
 # cleanup on exit
